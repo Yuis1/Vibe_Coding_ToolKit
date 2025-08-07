@@ -1,0 +1,193 @@
+---
+description: Universal deployment configuration rules for modern web applications
+globs: ["**/deploy/**/*", "**/deployment/**/*", "Dockerfile", "docker-compose.yml", "vercel.json"]
+alwaysApply: false
+---
+
+# Universal Deployment Rules
+
+## Default Deployment Strategy
+**默认部署方式**：本地开发和预览，仅在用户明确要求时才配置其他部署目标。
+
+### 1. Local Development (默认)
+```bash
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 本地预览构建结果
+npm run preview
+# 或者
+npx live-server dist
+```
+
+### 2. Local Static Hosting
+```bash
+# 使用 serve 进行本地静态托管
+npx serve dist
+
+# 或者使用 http-server
+npx http-server dist -p 8080
+```
+
+## Extended Deployment Options (按需配置)
+**仅当用户明确要求部署到特定平台时，才提供以下配置：**
+
+### 1. Vercel Configuration
+```json
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "functions": {
+    "api/*.ts": { "maxDuration": 30 }
+  }
+}
+```
+
+### 2. Docker Deployment
+```dockerfile
+# Multi-stage build
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      - NODE_ENV=production
+    depends_on: [database]
+  
+  database:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+
+volumes:
+  postgres_data:
+```
+
+### 3. Traditional Server (PM2 + Nginx)
+```javascript
+// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'api-server',
+    script: 'dist/index.js',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: { NODE_ENV: 'production', PORT: 3000 }
+  }]
+};
+```
+
+## Environment Management
+```typescript
+// config/index.ts
+interface Config {
+  port: number;
+  database: { url: string; ssl: boolean };
+  redis: { url: string };
+  jwt: { secret: string; expiresIn: string };
+}
+
+export const config: Config = {
+  port: parseInt(process.env.PORT || '3000'),
+  database: {
+    url: process.env.DATABASE_URL!,
+    ssl: process.env.NODE_ENV === 'production'
+  },
+  redis: { url: process.env.REDIS_URL || 'redis://localhost:6379' },
+  jwt: { secret: process.env.JWT_SECRET!, expiresIn: '24h' }
+};
+```
+
+## CI/CD Pipeline
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test
+      - run: npm run build
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+## Health Checks
+```typescript
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1'); // Database check
+    res.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'unhealthy', error: error.message });
+  }
+});
+```
+
+## Database Migrations
+```typescript
+// Prisma deployment
+"scripts": {
+  "deploy": "prisma migrate deploy && npm start",
+  "dev": "prisma migrate dev"
+}
+```
+
+## Security Requirements
+1. Use HTTPS in production
+2. Environment variables for secrets
+3. Rate limiting on API endpoints
+4. Input validation and sanitization
+5. Security headers implementation
+6. Container non-root user

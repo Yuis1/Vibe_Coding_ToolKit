@@ -1,0 +1,207 @@
+---
+description: LangGraph framework development rules for building AI agents
+globs: ["**/agents/**/*", "**/langgraph/**/*", "**/workflows/**/*"]
+alwaysApply: false
+---
+
+# LangGraph AI Agent Development Rules
+
+## Framework Overview
+LangGraph is a low-level agent orchestration framework for building controllable, resilient language agents. It uses graph-based workflows where each node can run an LLM, tool, or function while managing state automatically.
+
+## Core Concepts
+
+### 1. Graph-Based Architecture
+- **Nodes**: Individual processing steps (LLM calls, tool usage, functions)
+- **Edges**: Connections between nodes that define flow logic  
+- **State**: Shared state object passed between all nodes
+- **Persistence**: Built-in state persistence for long-running workflows
+
+### 2. Agent State Management
+```python
+from typing import TypedDict, List
+from langgraph.graph import StateGraph
+
+class AgentState(TypedDict):
+    messages: List[dict]
+    current_user: str
+    context: dict
+    step_count: int
+```
+
+### 3. Node Implementation
+```python
+def llm_node(state: AgentState) -> AgentState:
+    # Process with LLM
+    response = llm.invoke(state["messages"])
+    return {
+        **state,
+        "messages": state["messages"] + [response],
+        "step_count": state["step_count"] + 1
+    }
+
+def tool_node(state: AgentState) -> AgentState:
+    # Execute tools
+    result = tool.invoke(state["context"])
+    return {
+        **state,
+        "context": {**state["context"], "tool_result": result}
+    }
+```
+
+## Best Practices
+
+### 1. Graph Design Patterns
+1. **Linear Flow**: Simple sequential processing
+2. **Conditional Branching**: Route based on state or conditions
+3. **Loop Patterns**: Iterative processing with exit conditions
+4. **Human-in-the-Loop**: Pause for human approval/input
+5. **Multi-Agent**: Multiple specialized agents collaborating
+
+### 2. State Management
+1. Use TypedDict for clear state structure
+2. Implement proper state validation
+3. Keep state minimal but sufficient
+4. Use checkpointing for long workflows
+5. Handle state serialization/deserialization
+
+### 3. Error Handling
+```python
+from langgraph.prebuilt import ToolExecutor
+from langgraph.graph import END
+
+def error_handler(state: AgentState) -> str:
+    if "error" in state:
+        return "retry_node"
+    return END
+```
+
+### 4. Memory and Context
+1. Implement conversation memory for chatbots
+2. Use persistent storage for long-term context
+3. Implement context window management
+4. Store and retrieve relevant historical data
+
+## Common Implementation Patterns
+
+### 1. Basic Agent Setup
+```python
+from langgraph.graph import StateGraph, END, START
+
+# Create graph
+workflow = StateGraph(AgentState)
+
+# Add nodes
+workflow.add_node("agent", agent_node)
+workflow.add_node("tools", tool_node)
+
+# Add edges
+workflow.add_edge(START, "agent")
+workflow.add_conditional_edges(
+    "agent",
+    should_continue,
+    {"continue": "tools", "end": END}
+)
+workflow.add_edge("tools", "agent")
+
+# Compile graph
+app = workflow.compile()
+```
+
+### 2. Human-in-the-Loop Implementation
+```python
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+# Add checkpointing
+memory = SqliteSaver.from_conn_string(":memory:")
+app = workflow.compile(checkpointer=memory, interrupt_before=["human_input"])
+
+# Use with interruption
+config = {"configurable": {"thread_id": "conversation-1"}}
+result = app.invoke(initial_state, config)
+```
+
+### 3. Multi-Agent Coordination
+```python
+# Define specialized agents
+def researcher_agent(state: AgentState):
+    # Research and gather information
+    pass
+
+def writer_agent(state: AgentState):
+    # Write and format content
+    pass
+
+def reviewer_agent(state: AgentState):
+    # Review and validate output
+    pass
+```
+
+## Integration Guidelines
+
+### 1. With LangChain Tools
+```python
+from langchain.tools import Tool
+from langgraph.prebuilt import ToolExecutor
+
+tools = [
+    Tool(name="web_search", func=search_web),
+    Tool(name="calculator", func=calculate),
+]
+
+tool_executor = ToolExecutor(tools)
+```
+
+### 2. With External APIs
+```python
+import httpx
+
+async def api_node(state: AgentState) -> AgentState:
+    async with httpx.AsyncClient() as client:
+        response = await client.post("/api/endpoint", json=state["data"])
+        return {**state, "api_result": response.json()}
+```
+
+### 3. Deployment Considerations
+1. **Local Development**: Use in-memory checkpointing
+2. **Production**: Use PostgreSQL/Redis for persistence  
+3. **Serverless**: Consider cold start implications
+4. **Scaling**: Implement proper connection pooling
+
+## Streaming and Real-time Features
+```python
+# Stream tokens
+for chunk in app.stream(input_data, config):
+    print(chunk)
+
+# Stream intermediate steps
+for step in app.stream(input_data, config, stream_mode="values"):
+    print(f"Step: {step}")
+```
+
+## Testing Strategies
+1. **Unit Tests**: Test individual nodes in isolation
+2. **Integration Tests**: Test complete workflows
+3. **State Validation**: Verify state transitions
+4. **Performance Tests**: Measure execution time and resource usage
+
+## Common Use Cases
+1. **Chatbots**: Conversational AI with memory
+2. **Document Processing**: Multi-step document analysis
+3. **Research Assistants**: Information gathering and synthesis  
+4. **Content Generation**: Multi-stage content creation
+5. **Decision Support**: Complex decision-making workflows
+
+## Security Best Practices
+1. Validate all user inputs before processing
+2. Sanitize tool outputs before using in prompts
+3. Implement proper authentication and authorization
+4. Use environment variables for sensitive configuration
+5. Audit and log all agent actions
+
+## Performance Optimization
+1. Minimize state size for better performance
+2. Use async operations where possible
+3. Implement proper caching strategies
+4. Monitor memory usage in long-running workflows
+5. Use streaming for real-time responsiveness

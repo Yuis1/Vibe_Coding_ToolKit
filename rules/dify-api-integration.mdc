@@ -1,0 +1,227 @@
+---
+description: Dify knowledge base and workflow API integration rules
+globs: ["**/dify/**/*", "**/*.py", "**/*.ts", "**/*.js"]
+alwaysApply: false
+---
+
+# Dify API Integration Rules
+
+## Knowledge Base API Integration
+
+### API Authentication
+```javascript
+const difyConfig = {
+  baseURL: 'https://api.dify.ai/v1',
+  apiKey: process.env.DIFY_API_KEY,
+  headers: {
+    'Authorization': `Bearer ${process.env.DIFY_API_KEY}`,
+    'Content-Type': 'application/json'
+  }
+};
+```
+
+### Knowledge Base Operations
+1. **Create Knowledge Base**
+   ```javascript
+   async function createKnowledgeBase(name, description) {
+     const response = await fetch(`${difyConfig.baseURL}/datasets`, {
+       method: 'POST',
+       headers: difyConfig.headers,
+       body: JSON.stringify({
+         name: name,
+         description: description
+       })
+     });
+     return response.json();
+   }
+   ```
+
+2. **Upload Documents**
+   ```javascript
+   async function uploadDocument(datasetId, file, indexingTechnique = 'high_quality') {
+     const formData = new FormData();
+     formData.append('file', file);
+     formData.append('indexing_technique', indexingTechnique);
+     formData.append('process_rule', JSON.stringify({
+       mode: 'automatic'
+     }));
+
+     const response = await fetch(`${difyConfig.baseURL}/datasets/${datasetId}/document/create_by_file`, {
+       method: 'POST',
+       headers: {
+         'Authorization': `Bearer ${process.env.DIFY_API_KEY}`
+       },
+       body: formData
+     });
+     return response.json();
+   }
+   ```
+
+3. **Query Knowledge Base**
+   ```javascript
+   async function queryKnowledgeBase(datasetId, query, topK = 3) {
+     const response = await fetch(`${difyConfig.baseURL}/datasets/${datasetId}/hit-testing`, {
+       method: 'POST',
+       headers: difyConfig.headers,
+       body: JSON.stringify({
+         query: query,
+         retrieval_model: {
+           search_method: 'semantic_search',
+           reranking_enable: true,
+           top_k: topK
+         }
+       })
+     });
+     return response.json();
+   }
+   ```
+
+## Workflow API Integration
+
+### Workflow Execution
+```javascript
+async function executeWorkflow(workflowId, inputs, user) {
+  const response = await fetch(`${difyConfig.baseURL}/workflows/run`, {
+    method: 'POST',
+    headers: difyConfig.headers,
+    body: JSON.stringify({
+      inputs: inputs,
+      response_mode: 'blocking', // or 'streaming'
+      user: user
+    })
+  });
+  return response.json();
+}
+```
+
+### Streaming Workflow Execution
+```javascript
+async function executeWorkflowStream(workflowId, inputs, user, onMessage) {
+  const response = await fetch(`${difyConfig.baseURL}/workflows/run`, {
+    method: 'POST',
+    headers: difyConfig.headers,
+    body: JSON.stringify({
+      inputs: inputs,
+      response_mode: 'streaming',
+      user: user
+    })
+  });
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    
+    const chunk = decoder.decode(value);
+    const lines = chunk.split('\n');
+    
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = JSON.parse(line.slice(6));
+        onMessage(data);
+      }
+    }
+  }
+}
+```
+
+## Python API Integration
+
+### Knowledge Base Management
+```python
+import requests
+import os
+
+class DifyKnowledgeBase:
+    def __init__(self, api_key: str, base_url: str = "https://api.dify.ai/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def create_dataset(self, name: str, description: str):
+        url = f"{self.base_url}/datasets"
+        data = {
+            "name": name,
+            "description": description
+        }
+        response = requests.post(url, headers=self.headers, json=data)
+        return response.json()
+    
+    def upload_document(self, dataset_id: str, file_path: str):
+        url = f"{self.base_url}/datasets/{dataset_id}/document/create_by_file"
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        
+        with open(file_path, 'rb') as file:
+            files = {'file': file}
+            data = {
+                'indexing_technique': 'high_quality',
+                'process_rule': '{"mode": "automatic"}'
+            }
+            response = requests.post(url, headers=headers, files=files, data=data)
+        return response.json()
+```
+
+### Workflow Execution
+```python
+class DifyWorkflow:
+    def __init__(self, api_key: str, base_url: str = "https://api.dify.ai/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def run_workflow(self, inputs: dict, user: str, response_mode: str = "blocking"):
+        url = f"{self.base_url}/workflows/run"
+        data = {
+            "inputs": inputs,
+            "response_mode": response_mode,
+            "user": user
+        }
+        response = requests.post(url, headers=self.headers, json=data)
+        return response.json()
+```
+
+## Error Handling Best Practices
+```javascript
+async function safeAPICall(apiFunction, ...args) {
+  try {
+    const response = await apiFunction(...args);
+    
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.code && data.code !== 200) {
+      throw new Error(`Dify Error: ${data.message}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Dify API call failed:', error);
+    throw error;
+  }
+}
+```
+
+## Response Handling
+1. **Blocking Mode**: Wait for complete response
+2. **Streaming Mode**: Handle real-time data chunks
+3. **Error Codes**: Handle different error scenarios
+4. **Rate Limiting**: Implement proper retry logic
+5. **Data Validation**: Validate response structure
+
+## Integration Patterns
+1. **Batch Processing**: Process multiple documents
+2. **Real-time Queries**: Live knowledge base searches
+3. **Workflow Chaining**: Connect multiple workflows
+4. **Result Caching**: Cache frequent query results
+5. **Fallback Handling**: Implement fallback strategies

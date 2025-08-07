@@ -1,0 +1,107 @@
+---
+description: Universal database operations rules and best practices
+globs: ["**/db/**/*", "**/database/**/*", "**/models/**/*", "**/migrations/**/*"]
+alwaysApply: false
+---
+
+# Universal Database Development Rules
+
+## General Database Best Practices
+1. Always use parameterized queries to prevent SQL injection
+2. Implement proper error handling and return meaningful error messages
+3. Use connection pooling for better performance
+4. Handle database transactions properly with rollback on errors
+5. Always validate input data before database operations
+6. Use environment variables for database credentials
+7. Implement proper logging for database operations
+
+## PostgreSQL Best Practices
+1. Use `pg` library for Node.js or `psycopg2` for Python
+2. Connection example (Node.js):
+   ```javascript
+   const { Pool } = require('pg');
+   const pool = new Pool({
+     connectionString: process.env.DATABASE_URL,
+     ssl: process.env.NODE_ENV === 'production'
+   });
+   ```
+3. Use migrations for schema changes
+4. Implement proper indexing for frequently queried columns
+5. Use JSONB for flexible document storage when needed
+
+## MySQL Best Practices
+1. Use `mysql2` for Node.js or `PyMySQL` for Python
+2. Connection example (Node.js):
+   ```javascript
+   const mysql = require('mysql2/promise');
+   const pool = mysql.createPool({
+     host: process.env.DB_HOST,
+     user: process.env.DB_USER,
+     password: process.env.DB_PASSWORD,
+     database: process.env.DB_NAME
+   });
+   ```
+3. Use prepared statements for security
+4. Implement proper foreign key constraints
+5. Use InnoDB storage engine for ACID compliance
+
+## MongoDB Best Practices
+1. Use `mongoose` for Node.js or `pymongo` for Python
+2. Define proper schemas and validation
+3. Use indexes for query optimization
+4. Implement proper aggregation pipelines
+5. Connection example (Node.js):
+   ```javascript
+   const mongoose = require('mongoose');
+   mongoose.connect(process.env.MONGODB_URI);
+   ```
+
+## SQLite Best Practices
+1. Good for development and small applications
+2. Use `sqlite3` for Node.js or built-in `sqlite3` for Python
+3. Implement WAL mode for better concurrency
+4. Use foreign key constraints
+5. Regular VACUUM operations for maintenance
+
+## ORM/ODM Recommendations
+1. **Prisma** (TypeScript/JavaScript) - Type-safe database access
+2. **SQLAlchemy** (Python) - Powerful ORM with advanced features
+3. **Sequelize** (Node.js) - Feature-rich ORM for SQL databases
+4. **Mongoose** (Node.js) - MongoDB object modeling
+5. **TypeORM** (TypeScript/JavaScript) - Supports multiple databases
+
+## Database Deployment Options
+1. **Self-hosted**: PostgreSQL, MySQL, MongoDB on VPS/dedicated servers
+2. **Cloud providers**: 
+   - AWS RDS/DocumentDB
+   - Google Cloud SQL/Firestore
+   - Azure Database services
+3. **Serverless databases**: PlanetScale, Supabase, FaunaDB, Neon
+4. **Edge databases**: Turso (SQLite), Upstash Redis
+5. **Container deployment**: Docker Compose with database containers
+6. **Local development**: Docker containers, local installations
+
+## Environment Configuration
+```env
+# PostgreSQL
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# MySQL
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=myapp
+
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/myapp
+
+# Redis
+REDIS_URL=redis://localhost:6379
+```
+
+## Migration Strategy
+1. Use version-controlled migration files
+2. Test migrations on staging before production
+3. Implement rollback strategies
+4. Use atomic migrations when possible
+5. Document breaking changes thoroughly

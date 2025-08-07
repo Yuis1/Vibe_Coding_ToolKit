@@ -1,0 +1,186 @@
+---
+description: Python AI and backend development rules and best practices
+globs: ["**/*.py", "**/requirements.txt", "**/pyproject.toml", "**/uv.lock"]
+alwaysApply: false
+---
+
+# Python AI & Backend Development Rules
+
+## Project Structure
+```
+project/
+├── app/
+│   ├── __init__.py
+│   ├── main.py          # FastAPI/Flask app entry
+│   ├── models/          # AI models and database models
+│   ├── api/             # API routes
+│   ├── services/        # Business logic
+│   ├── utils/           # Utility functions
+│   └── config.py        # Configuration
+├── tests/               # Test files
+├── pyproject.toml       # UV project configuration
+├── uv.lock             # UV lock file
+├── .env                # Environment variables
+├── Dockerfile          # Container configuration
+└── README.md
+```
+
+## Package Management with UV
+1. Use `uv` for fast Python package management
+2. Initialize project: `uv init`
+3. Add dependencies: `uv add fastapi uvicorn`
+4. Add dev dependencies: `uv add --dev pytest`
+5. Install dependencies: `uv sync`
+6. Run scripts: `uv run python app/main.py`
+7. Example `pyproject.toml`:
+   ```toml
+   [project]
+   name = "my-app"
+   version = "0.1.0"
+   dependencies = [
+       "fastapi>=0.104.1",
+       "uvicorn>=0.24.0",
+       "pydantic>=2.5.0"
+   ]
+   
+   [tool.uv]
+   dev-dependencies = [
+       "pytest>=7.4.0",
+       "httpx>=0.25.0"
+   ]
+   ```
+
+## FastAPI Best Practices
+1. Use Pydantic models for request/response validation
+2. Implement dependency injection for database connections
+3. Use async/await for I/O operations
+4. Example structure:
+   ```python
+   from fastapi import FastAPI, Depends
+   from pydantic import BaseModel
+   
+   app = FastAPI()
+   
+   class ItemRequest(BaseModel):
+       name: str
+       description: str
+   
+   @app.post("/items/")
+   async def create_item(item: ItemRequest):
+       return {"message": "Item created"}
+   ```
+
+## AI Model Integration
+1. **Model Loading**: Load models once at startup, not per request
+2. **Memory Management**: Use model caching and batch processing
+3. **Async Processing**: Use background tasks for heavy computations
+4. **Popular frameworks**:
+   - **Transformers**: For NLP models
+   - **LangGraph**: For complex LLM workflows
+   - **OpenAI SDK**: For GPT models
+   - **Anthropic SDK**: For Claude models
+
+## LangGraph Best Practices
+1. Define clear state schemas for workflow management
+2. Use typed state for better debugging and maintenance
+3. Implement proper error handling in workflow nodes
+4. Example workflow:
+   ```python
+   from langgraph.graph import StateGraph, END
+   from typing import TypedDict
+   
+   class WorkflowState(TypedDict):
+       messages: list
+       current_step: str
+   
+   def process_node(state: WorkflowState):
+       # Process logic here
+       return {"messages": state["messages"] + ["processed"]}
+   
+   workflow = StateGraph(WorkflowState)
+   workflow.add_node("process", process_node)
+   workflow.add_edge("process", END)
+   ```
+
+## Environment Management
+1. Use `python-dotenv` for environment variables
+2. Create `.env.example` for documentation
+3. Example `.env`:
+   ```env
+   OPENAI_API_KEY=your_key_here
+   DATABASE_URL=postgresql://user:pass@host/db
+   REDIS_URL=redis://localhost:6379
+   DEBUG=False
+   ```
+
+## Database Integration
+1. **SQLAlchemy**: For SQL databases
+2. **Asyncpg**: For async PostgreSQL
+3. **Motor**: For async MongoDB
+4. Example with SQLAlchemy:
+   ```python
+   from sqlalchemy import create_engine
+   from sqlalchemy.orm import sessionmaker
+   
+   engine = create_engine(DATABASE_URL)
+   SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+   ```
+
+## API Authentication
+1. Use JWT tokens for stateless authentication
+2. Implement OAuth2 for third-party integration
+3. Example with FastAPI:
+   ```python
+   from fastapi.security import HTTPBearer
+   
+   security = HTTPBearer()
+   
+   @app.get("/protected")
+   async def protected_route(token: str = Depends(security)):
+       # Verify token
+       return {"data": "protected"}
+   ```
+
+## Error Handling
+1. Create custom exception classes
+2. Implement global exception handlers
+3. Log errors with proper context
+4. Return consistent error responses
+
+## Testing
+1. Use `pytest` for unit testing
+2. Use `httpx` for async API testing
+3. Mock external services
+4. Example:
+   ```python
+   import pytest
+   from httpx import AsyncClient
+   
+   @pytest.mark.asyncio
+   async def test_create_item():
+       async with AsyncClient(app=app, base_url="http://test") as ac:
+           response = await ac.post("/items/", json={"name": "test"})
+       assert response.status_code == 200
+   ```
+
+## Performance Optimization
+1. Use connection pooling for databases
+2. Implement caching with Redis
+3. Use background tasks for heavy operations
+4. Monitor with tools like New Relic or Datadog
+5. Profile code with `cProfile` or `py-spy`
+
+## Security Best Practices
+1. Validate all inputs with Pydantic
+2. Use HTTPS in production
+3. Implement rate limiting
+4. Sanitize user inputs
+5. Use environment variables for secrets
+6. Regular dependency updates with `uv update`
+
+## AI Model Serving
+1. **Model caching**: Load models once at startup
+2. **Batch processing**: Process multiple requests together
+3. **GPU utilization**: Use CUDA when available
+4. **Model versioning**: Track model versions and rollback capability
+5. **A/B testing**: Compare model performance

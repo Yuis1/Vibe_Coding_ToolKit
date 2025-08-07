@@ -1,0 +1,250 @@
+---
+description: TypeScript, React, Node.js, and Next.js development rules and best practices
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/package.json", "**/tsconfig.json", "**/next.config.js"]
+alwaysApply: false
+---
+
+# TypeScript & React Development Rules
+
+## Project Structure
+```
+project/
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── pages/          # Next.js pages or React Router pages
+│   ├── hooks/          # Custom React hooks
+│   ├── utils/          # Utility functions
+│   ├── types/          # TypeScript type definitions
+│   ├── services/       # API services
+│   ├── context/        # React context providers
+│   └── styles/         # CSS/styled-components
+├── public/             # Static assets
+├── package.json
+├── tsconfig.json
+├── next.config.js      # Next.js configuration
+└── README.md
+```
+
+## TypeScript Best Practices
+1. Enable strict mode in `tsconfig.json`
+2. Use explicit return types for functions
+3. Prefer `interface` over `type` for object shapes
+4. Use utility types: `Partial<T>`, `Pick<T>`, `Omit<T>`
+5. Example configuration:
+   ```json
+   {
+     "compilerOptions": {
+       "strict": true,
+       "noImplicitAny": true,
+       "strictNullChecks": true,
+       "noImplicitReturns": true
+     }
+   }
+   ```
+
+## React Best Practices
+1. Use functional components with hooks
+2. Implement proper prop types with TypeScript interfaces
+3. Use `React.memo()` for performance optimization
+4. Custom hooks for reusable logic
+5. Example component:
+   ```tsx
+   interface Props {
+     title: string;
+     onClick: () => void;
+   }
+   
+   const Button: React.FC<Props> = ({ title, onClick }) => {
+     return (
+       <button onClick={onClick} className="btn">
+         {title}
+       </button>
+     );
+   };
+   
+   export default React.memo(Button);
+   ```
+
+## Next.js Best Practices
+1. Use App Router (Next.js 13+) for new projects
+2. Implement proper SEO with metadata
+3. Use Server Components when possible
+4. Client Components only when needed (interactivity)
+5. Example App Router structure:
+   ```
+   app/
+   ├── layout.tsx          # Root layout
+   ├── page.tsx           # Home page
+   ├── about/
+   │   └── page.tsx       # About page
+   └── api/
+       └── users/
+           └── route.ts   # API route
+   ```
+
+## State Management
+1. **Built-in React state**: `useState`, `useReducer`
+2. **Zustand**: Lightweight global state
+3. **Redux Toolkit**: Complex state management
+4. **TanStack Query**: Server state management
+5. Example with Zustand:
+   ```tsx
+   import { create } from 'zustand';
+   
+   interface Store {
+     count: number;
+     increment: () => void;
+   }
+   
+   const useStore = create<Store>((set) => ({
+     count: 0,
+     increment: () => set((state) => ({ count: state.count + 1 })),
+   }));
+   ```
+
+## API Integration
+1. Use `fetch` with proper error handling
+2. Implement loading states
+3. Use TanStack Query for caching and synchronization
+4. Example service:
+   ```tsx
+   interface User {
+     id: number;
+     name: string;
+     email: string;
+   }
+   
+   export const userService = {
+     async getUsers(): Promise<User[]> {
+       const response = await fetch('/api/users');
+       if (!response.ok) throw new Error('Failed to fetch users');
+       return response.json();
+     }
+   };
+   ```
+
+## Styling Solutions
+1. **Tailwind CSS**: Utility-first CSS framework
+2. **CSS Modules**: Scoped CSS
+3. **Styled-components**: CSS-in-JS
+4. **Emotion**: Performance-focused CSS-in-JS
+5. Example with Tailwind:
+   ```tsx
+   const Card = ({ children }: { children: React.ReactNode }) => (
+     <div className="bg-white rounded-lg shadow-md p-6">
+       {children}
+     </div>
+   );
+   ```
+
+## Form Handling
+1. Use **React Hook Form** for performance
+2. Integrate with **Zod** for validation
+3. Example:
+   ```tsx
+   import { useForm } from 'react-hook-form';
+   import { zodResolver } from '@hookform/resolvers/zod';
+   import { z } from 'zod';
+   
+   const schema = z.object({
+     email: z.string().email(),
+     password: z.string().min(8),
+   });
+   
+   type FormData = z.infer<typeof schema>;
+   
+   const LoginForm = () => {
+     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+       resolver: zodResolver(schema),
+     });
+     
+     const onSubmit = (data: FormData) => {
+       // Handle form submission
+     };
+     
+     return (
+       <form onSubmit={handleSubmit(onSubmit)}>
+         <input {...register('email')} />
+         {errors.email && <span>{errors.email.message}</span>}
+       </form>
+     );
+   };
+   ```
+
+## Testing
+1. **Vitest**: Fast unit testing
+2. **React Testing Library**: Component testing
+3. **Playwright**: E2E testing
+4. Example test:
+   ```tsx
+   import { render, screen } from '@testing-library/react';
+   import { Button } from './Button';
+   
+   test('renders button with title', () => {
+     render(<Button title="Click me" onClick={() => {}} />);
+     expect(screen.getByText('Click me')).toBeInTheDocument();
+   });
+   ```
+
+## Node.js Backend
+1. Use **Express.js** or **Fastify** for APIs
+2. Implement proper middleware for auth, logging, CORS
+3. Use **Prisma** or **TypeORM** for database operations
+4. Example Express setup:
+   ```tsx
+   import express from 'express';
+   import cors from 'cors';
+   
+   const app = express();
+   
+   app.use(cors());
+   app.use(express.json());
+   
+   app.get('/api/health', (req, res) => {
+     res.json({ status: 'ok' });
+   });
+   
+   app.listen(3000, () => {
+     console.log('Server running on port 3000');
+   });
+   ```
+
+## Development Tools
+1. **ESLint**: Code linting
+2. **Prettier**: Code formatting
+3. **Husky**: Git hooks
+4. **lint-staged**: Pre-commit linting
+5. Example `.eslintrc.json`:
+   ```json
+   {
+     "extends": [
+       "next/core-web-vitals",
+       "@typescript-eslint/recommended"
+     ],
+     "rules": {
+       "@typescript-eslint/no-unused-vars": "error",
+       "prefer-const": "error"
+     }
+   }
+   ```
+
+## Performance Optimization
+1. Use React.memo() for expensive components
+2. Implement code splitting with `React.lazy()`
+3. Optimize images with Next.js Image component
+4. Use proper caching strategies
+5. Monitor with React DevTools Profiler
+
+## Security Best Practices
+1. Validate all inputs on both client and server
+2. Use HTTPS in production
+3. Implement CSRF protection
+4. Sanitize user inputs
+5. Use environment variables for secrets
+6. Regular dependency updates
+
+## Package Management
+1. Use `npm` or `yarn` for package management
+2. Pin dependency versions for reproducibility
+3. Use `npm audit` for security vulnerabilities
+4. Prefer exact versions in package.json

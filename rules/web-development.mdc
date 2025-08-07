@@ -1,0 +1,137 @@
+---
+description: React Web 前端项目开发规则
+globs: ["**/*.html", "**/*.js", "**/*.ts", "**/*.jsx", "**/*.tsx"]
+alwaysApply: false
+---
+
+# React Web 前端开发规则
+
+## 项目结构
+1. React 项目源代码存放在 src 目录下，构建产物放在 dist 目录下
+2. 使用 Vite 作为构建工具，通过 npm/pnpm 管理依赖
+3. 路由使用 React Router，优先配置 hash 路由避免静态部署 404 问题
+4. 环境配置通过 .env 文件管理，支持 VITE_ 前缀的环境变量
+
+## 部署和预览
+1. **本地预览**：构建完成后使用 `npx live-server dist` 预览
+2. **静态部署**：可选支持部署到 Vercel、Netlify 等平台
+3. **资源路径**：Vite 配置 `base: './'` 使用相对路径
+4. **部署确认**：构建完成后询问用户是否需要部署
+
+## React 状态和认证
+1. **状态管理**：使用 Zustand 或 Context API 管理应用状态
+2. **认证方案**：优先使用 JWT、Auth0、Supabase Auth 等标准认证
+3. **用户会话**：实现安全的用户会话管理和 localStorage 持久化
+
+```jsx
+// React 认证 Hook 示例
+import { useState, useEffect } from 'react';
+
+export function useAuth() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // 验证 token 并获取用户信息
+      verifyToken(token).then(setUser).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const login = async (credentials) => {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+    const { token, user } = await response.json();
+    localStorage.setItem('authToken', token);
+    setUser(user);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setUser(null);
+  };
+
+  return { user, loading, login, logout };
+}
+```
+
+## API 集成
+```jsx
+// React API Hook
+import { useState, useEffect } from 'react';
+
+export function useApi(endpoint) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        });
+        
+        if (!response.ok) throw new Error('API request failed');
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [endpoint]);
+
+  return { data, loading, error };
+}
+```
+
+## 环境配置
+```env
+# React 环境变量配置
+VITE_API_URL=https://api.example.com
+VITE_APP_NAME=My React App
+VITE_AUTH_PROVIDER=jwt
+```
+
+## Vite 配置
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  base: './', // 相对路径部署
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+        },
+      },
+    },
+  },
+});
+```
+
+## 构建流程
+1. 确保执行 `npm install` 安装依赖
+2. 运行 `npm run build` 构建生产版本
+3. 使用 `npm run preview` 预览构建结果

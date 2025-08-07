@@ -1,0 +1,386 @@
+---
+description: CopilotKit framework development rules for building AI-powered React applications
+globs: ["**/copilot/**/*", "**/ai/**/*", "**/*copilot*"]
+alwaysApply: false
+---
+
+# CopilotKit React AI Development Rules
+
+## Framework Overview
+CopilotKit is a React UI + infrastructure framework for building AI Copilots, AI chatbots, and in-app AI agents. It provides React hooks and components for creating intelligent, interactive experiences.
+
+## Core Components
+
+### 1. CopilotProvider Setup
+```jsx
+import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+
+function App() {
+  return (
+    <CopilotKit runtimeUrl="/api/copilotkit">
+      <YourAppContent />
+      <CopilotPopup
+        instructions="You are a helpful assistant. Help users with their tasks."
+        labels={{
+          title: "Your AI Assistant",
+          initial: "How can I help you today?",
+        }}
+      />
+    </CopilotKit>
+  );
+}
+```
+
+### 2. Essential Hooks
+
+#### useCopilotAction
+```jsx
+import { useCopilotAction } from "@copilotkit/react-core";
+
+function MyComponent() {
+  useCopilotAction({
+    name: "updateUserProfile",
+    description: "Update the user's profile information",
+    parameters: [
+      {
+        name: "name",
+        type: "string",
+        description: "User's full name",
+        required: true,
+      },
+      {
+        name: "email", 
+        type: "string",
+        description: "User's email address",
+      },
+    ],
+    handler: async ({ name, email }) => {
+      // Handle the action
+      await updateProfile({ name, email });
+      return "Profile updated successfully!";
+    },
+  });
+}
+```
+
+#### useCopilotReadable
+```jsx
+import { useCopilotReadable } from "@copilotkit/react-core";
+
+function DataComponent({ data }) {
+  useCopilotReadable({
+    description: "Current application data",
+    value: data,
+  });
+
+  // Component continues...
+}
+```
+
+#### useCopilotChat
+```jsx
+import { useCopilotChat } from "@copilotkit/react-core";
+
+function ChatComponent() {
+  const {
+    visibleMessages,
+    appendMessage,
+    setMessages,
+    deleteMessage,
+    reloadMessages,
+    stopGeneration,
+    isLoading,
+  } = useCopilotChat();
+
+  return (
+    <div>
+      {visibleMessages.map((message) => (
+        <div key={message.id}>{message.content}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Backend Integration
+
+### 1. Next.js API Route Setup
+```typescript
+// pages/api/copilotkit/route.ts
+import { CopilotRuntime, OpenAIAdapter } from "@copilotkit/runtime";
+import { NextRequest } from "next/server";
+
+const copilotKit = new CopilotRuntime();
+
+export async function POST(req: NextRequest) {
+  const { handleRequest } = copilotKit.streamHttpServerResponse({
+    req,
+    endpoint: "/api/copilotkit",
+    adapter: new OpenAIAdapter({ model: "gpt-4" }),
+    actions: [
+      // Define server-side actions
+      {
+        name: "fetchUserData",
+        description: "Fetch user data from database",
+        parameters: {
+          userId: {
+            type: "string",
+            description: "User ID to fetch",
+            required: true,
+          },
+        },
+        handler: async ({ userId }) => {
+          // Database operation
+          return await getUserData(userId);
+        },
+      },
+    ],
+  });
+
+  return handleRequest();
+}
+```
+
+### 2. Express.js Setup
+```typescript
+import express from "express";
+import { CopilotRuntime, OpenAIAdapter } from "@copilotkit/runtime";
+
+const app = express();
+
+app.use("/copilotkit", (req, res) => {
+  const runtime = new CopilotRuntime();
+  
+  return runtime.streamHttpServerResponse({
+    req,
+    res,
+    endpoint: "/copilotkit",
+    adapter: new OpenAIAdapter({ model: "gpt-4" }),
+  });
+});
+```
+
+## UI Components
+
+### 1. CopilotPopup (Chat Interface)
+```jsx
+<CopilotPopup
+  instructions="System prompt for the AI assistant"
+  labels={{
+    title: "AI Assistant",
+    initial: "Hello! How can I help you?",
+    placeholder: "Ask me anything...",
+  }}
+  defaultOpen={false}
+  shortcut="/"
+  hitl={{
+    enabled: true,
+    approvalRequired: ["deleteData", "sendEmail"],
+  }}
+/>
+```
+
+### 2. CopilotSidebar
+```jsx
+<CopilotSidebar
+  instructions="You are a helpful sidebar assistant"
+  defaultOpen={true}
+  position="left"
+  width="300px"
+/>
+```
+
+### 3. Custom UI Components
+```jsx
+import { useCopilotChat } from "@copilotkit/react-core";
+
+function CustomChatInterface() {
+  const { visibleMessages, appendMessage, isLoading } = useCopilotChat();
+
+  return (
+    <div className="custom-chat">
+      <div className="messages">
+        {visibleMessages.map((message) => (
+          <div key={message.id} className={`message ${message.role}`}>
+            {message.content}
+          </div>
+        ))}
+      </div>
+      {isLoading && <div className="typing-indicator">AI is typing...</div>}
+    </div>
+  );
+}
+```
+
+## Advanced Patterns
+
+### 1. State Integration
+```jsx
+import { useCopilotReadable } from "@copilotkit/react-core";
+
+function StateIntegratedComponent() {
+  const [todos, setTodos] = useState([]);
+
+  // Make state readable to AI
+  useCopilotReadable({
+    description: "Current todo list",
+    value: todos,
+  });
+
+  useCopilotAction({
+    name: "addTodo",
+    description: "Add a new todo item",
+    parameters: [
+      {
+        name: "text",
+        type: "string", 
+        description: "Todo item text",
+        required: true,
+      },
+    ],
+    handler: async ({ text }) => {
+      setTodos(prev => [...prev, { id: Date.now(), text, done: false }]);
+    },
+  });
+
+  return (
+    <div>
+      {todos.map(todo => (
+        <div key={todo.id}>{todo.text}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+### 2. Multi-Agent Systems
+```jsx
+function MultiAgentExample() {
+  // Research agent
+  useCopilotAction({
+    name: "research",
+    description: "Research a topic and gather information",
+    handler: async ({ topic }) => {
+      return await performResearch(topic);
+    },
+  });
+
+  // Writing agent
+  useCopilotAction({
+    name: "writeContent",
+    description: "Write content based on research",
+    handler: async ({ research, style }) => {
+      return await generateContent(research, style);
+    },
+  });
+}
+```
+
+### 3. Human-in-the-Loop (HITL)
+```jsx
+<CopilotPopup
+  hitl={{
+    enabled: true,
+    approvalRequired: ["deleteUser", "sendEmail", "makePayment"],
+    approvalPrompt: (actionName) => 
+      `Do you want to execute ${actionName}?`,
+  }}
+/>
+```
+
+## Best Practices
+
+### 1. Action Design
+1. **Clear Descriptions**: Provide detailed descriptions for actions
+2. **Type Safety**: Use proper TypeScript types for parameters
+3. **Error Handling**: Implement comprehensive error handling
+4. **Validation**: Validate all inputs before processing
+5. **Async Operations**: Use proper async/await patterns
+
+### 2. Context Management
+```jsx
+// Good: Specific, relevant context
+useCopilotReadable({
+  description: "User's current shopping cart items",
+  value: cartItems.map(item => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity
+  })),
+});
+
+// Avoid: Too much or irrelevant data
+useCopilotReadable({
+  description: "All application data", // Too vague
+  value: entireAppState, // Too much data
+});
+```
+
+### 3. Performance Optimization
+1. **Selective Context**: Only provide relevant data to AI
+2. **Debounce Updates**: Avoid excessive context updates
+3. **Memoization**: Use React.memo for expensive computations
+4. **Code Splitting**: Lazy load CopilotKit components
+
+### 4. Security Considerations
+1. **Input Validation**: Validate all user inputs
+2. **Rate Limiting**: Implement rate limiting on API endpoints
+3. **Authentication**: Secure your backend endpoints
+4. **Data Sanitization**: Sanitize data before processing
+
+## Deployment
+
+### 1. Environment Configuration
+```env
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4
+
+# CopilotKit Configuration
+COPILOTKIT_ENDPOINT=/api/copilotkit
+```
+
+### 2. Vercel Deployment
+```json
+// vercel.json
+{
+  "functions": {
+    "pages/api/copilotkit/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}
+```
+
+### 3. Docker Deployment
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## Testing Strategies
+1. **Unit Tests**: Test individual actions and hooks
+2. **Integration Tests**: Test AI-human interactions
+3. **E2E Tests**: Test complete user workflows
+4. **Performance Tests**: Monitor response times and resource usage
+
+## Common Use Cases
+1. **Customer Support**: AI-powered help desk
+2. **Content Creation**: AI writing assistants
+3. **Data Analysis**: AI-driven insights and reports
+4. **Task Management**: AI-powered productivity tools
+5. **E-commerce**: AI shopping assistants
+
+## Troubleshooting
+1. **Action Not Working**: Check parameter types and descriptions
+2. **Context Not Available**: Ensure useCopilotReadable is properly set up
+3. **Slow Responses**: Optimize context size and API calls
+4. **UI Issues**: Check React component hierarchy and state management

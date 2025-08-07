@@ -1,0 +1,304 @@
+---
+description: Dify extension plugin development rules and best practices
+globs: ["**/plugins/**/*", "**/extensions/**/*", "**/*.py", "**/*.ts"]
+alwaysApply: false
+---
+
+# Dify Extension Plugin Development Rules
+
+## Plugin Architecture Overview
+Dify plugins extend platform capabilities through modular components that can be independently developed, deployed, and maintained.
+
+## Plugin Types
+1. **Tool Plugins**: External API integrations and custom functions
+2. **Model Plugins**: Custom LLM provider integrations
+3. **Node Plugins**: Custom workflow nodes
+4. **Extension Plugins**: UI and functionality extensions
+
+## Tool Plugin Development
+
+### Plugin Manifest
+```yaml
+# manifest.yaml
+version: "0.0.1"
+type: "tool"
+author: "developer-name"
+name: "custom-tool"
+label:
+  en_US: "Custom Tool"
+  zh_Hans: "自定义工具"
+description:
+  en_US: "A custom tool for specific functionality"
+  zh_Hans: "用于特定功能的自定义工具"
+icon: "icon.svg"
+tags:
+  - "api"
+  - "integration"
+```
+
+### Tool Implementation (Python)
+```python
+from typing import Any, Dict, List
+from dify_plugin import Tool
+
+class CustomTool(Tool):
+    def get_runtime_parameters(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "name": "input_text",
+                "type": "string",
+                "required": True,
+                "label": {
+                    "en_US": "Input Text",
+                    "zh_Hans": "输入文本"
+                }
+            },
+            {
+                "name": "option",
+                "type": "select",
+                "required": False,
+                "options": [
+                    {"value": "option1", "label": {"en_US": "Option 1"}},
+                    {"value": "option2", "label": {"en_US": "Option 2"}}
+                ]
+            }
+        ]
+    
+    def _invoke(self, user_id: str, tool_parameters: Dict[str, Any]) -> str:
+        input_text = tool_parameters.get("input_text", "")
+        option = tool_parameters.get("option", "option1")
+        
+        # Custom logic implementation
+        result = self.process_text(input_text, option)
+        
+        return self.create_text_message(result)
+    
+    def process_text(self, text: str, option: str) -> str:
+        # Implement your custom logic here
+        if option == "option1":
+            return text.upper()
+        else:
+            return text.lower()
+```
+
+### Tool Implementation (TypeScript)
+```typescript
+import { Tool, ToolParameter, ToolInvokeMessage } from '@dify/plugin-sdk';
+
+interface CustomToolParameters {
+  input_text: string;
+  option?: string;
+}
+
+export class CustomTool extends Tool {
+  getRuntimeParameters(): ToolParameter[] {
+    return [
+      {
+        name: 'input_text',
+        type: 'string',
+        required: true,
+        label: {
+          'en_US': 'Input Text',
+          'zh_Hans': '输入文本'
+        }
+      },
+      {
+        name: 'option',
+        type: 'select',
+        required: false,
+        options: [
+          { value: 'option1', label: { 'en_US': 'Option 1' } },
+          { value: 'option2', label: { 'en_US': 'Option 2' } }
+        ]
+      }
+    ];
+  }
+
+  async invoke(
+    userId: string,
+    toolParameters: CustomToolParameters
+  ): Promise<ToolInvokeMessage> {
+    const { input_text, option = 'option1' } = toolParameters;
+    
+    // Custom logic implementation
+    const result = this.processText(input_text, option);
+    
+    return this.createTextMessage(result);
+  }
+
+  private processText(text: string, option: string): string {
+    if (option === 'option1') {
+      return text.toUpperCase();
+    } else {
+      return text.toLowerCase();
+    }
+  }
+}
+```
+
+## Model Provider Plugin Development
+
+### Provider Configuration
+```python
+from typing import Dict, List, Optional
+from dify_plugin import LLMProvider, ProviderConfig
+
+class CustomLLMProvider(LLMProvider):
+    def get_provider_schema(self) -> ProviderConfig:
+        return ProviderConfig(
+            provider="custom-llm",
+            label={
+                "en_US": "Custom LLM Provider",
+                "zh_Hans": "自定义LLM提供商"
+            },
+            description={
+                "en_US": "Custom LLM provider integration",
+                "zh_Hans": "自定义LLM提供商集成"
+            },
+            icon_small="icon-small.svg",
+            icon_large="icon-large.svg",
+            supported_model_types=["llm", "text-embedding"],
+            configurate_methods=["predefined-model", "customizable-model"]
+        )
+    
+    def get_model_list(self) -> List[Dict]:
+        return [
+            {
+                "id": "custom-model-1",
+                "name": "Custom Model 1",
+                "model_type": "llm",
+                "features": ["generate", "stream"]
+            }
+        ]
+```
+
+## Node Plugin Development
+
+### Custom Workflow Node
+```python
+from typing import Dict, Any, List
+from dify_plugin import WorkflowNode, NodeRunResult
+
+class CustomProcessingNode(WorkflowNode):
+    node_type = "custom-processing"
+    
+    def get_node_config(self) -> Dict[str, Any]:
+        return {
+            "type": self.node_type,
+            "config": {
+                "processing_type": {
+                    "type": "select",
+                    "required": True,
+                    "options": [
+                        {"value": "text", "label": "Text Processing"},
+                        {"value": "data", "label": "Data Processing"}
+                    ]
+                },
+                "custom_parameter": {
+                    "type": "string",
+                    "required": False
+                }
+            }
+        }
+    
+    def run(self, variable_pool: Dict[str, Any]) -> NodeRunResult:
+        processing_type = self.config.get("processing_type")
+        custom_parameter = self.config.get("custom_parameter", "")
+        
+        # Custom node logic
+        result = self.process_data(variable_pool, processing_type, custom_parameter)
+        
+        return NodeRunResult(
+            status="succeeded",
+            outputs={
+                "processed_data": result
+            }
+        )
+    
+    def process_data(self, data: Dict[str, Any], processing_type: str, parameter: str) -> str:
+        # Implement custom processing logic
+        if processing_type == "text":
+            return self.process_text(data, parameter)
+        else:
+            return self.process_data_type(data, parameter)
+```
+
+## Plugin Testing
+```python
+import unittest
+from unittest.mock import Mock, patch
+from your_plugin import CustomTool
+
+class TestCustomTool(unittest.TestCase):
+    def setUp(self):
+        self.tool = CustomTool()
+    
+    def test_invoke_with_option1(self):
+        result = self.tool._invoke(
+            user_id="test-user",
+            tool_parameters={
+                "input_text": "hello world",
+                "option": "option1"
+            }
+        )
+        self.assertIn("HELLO WORLD", result)
+    
+    def test_invoke_with_option2(self):
+        result = self.tool._invoke(
+            user_id="test-user",
+            tool_parameters={
+                "input_text": "HELLO WORLD",
+                "option": "option2"
+            }
+        )
+        self.assertIn("hello world", result)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+## Plugin Package Structure
+```
+plugin-name/
+├── manifest.yaml          # Plugin manifest
+├── provider/              # Provider implementation
+│   ├── __init__.py
+│   └── custom_provider.py
+├── tools/                 # Tool implementations
+│   ├── __init__.py
+│   └── custom_tool.py
+├── nodes/                 # Custom nodes
+│   ├── __init__.py
+│   └── custom_node.py
+├── tests/                 # Unit tests
+│   ├── __init__.py
+│   └── test_plugin.py
+├── assets/               # Icons and static files
+│   ├── icon.svg
+│   └── icon-large.svg
+├── requirements.txt      # Python dependencies
+└── README.md            # Documentation
+```
+
+## Plugin Development Best Practices
+1. **Error Handling**: Implement comprehensive error handling
+2. **Logging**: Use proper logging for debugging
+3. **Validation**: Validate all input parameters
+4. **Testing**: Write unit tests for all functionality
+5. **Documentation**: Provide clear documentation and examples
+6. **Performance**: Optimize for performance and resource usage
+7. **Security**: Sanitize inputs and handle sensitive data properly
+
+## Plugin Deployment
+1. **Local Testing**: Test plugins in local development environment
+2. **Package Creation**: Create plugin package with all dependencies
+3. **Registry Upload**: Upload to Dify plugin registry
+4. **Version Management**: Use semantic versioning
+5. **Updates**: Handle plugin updates and migrations
+
+## Plugin Integration Patterns
+1. **API Wrappers**: Wrap external APIs as Dify tools
+2. **Data Processors**: Create custom data processing nodes
+3. **Model Integrations**: Add support for new LLM providers
+4. **Workflow Extensions**: Extend workflow capabilities
+5. **UI Enhancements**: Add custom UI components
