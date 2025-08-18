@@ -5,6 +5,7 @@
 原文地址 [www.dzombak.com](https://www.dzombak.com/blog/2025/08/getting-good-results-from-claude-code/)
 
 ---
+
 I’ve been experimenting with LLM programming agents over the past few months. Claude Code has become my favorite.
 
 It is not without issues, but it’s allowed me to write ~12 programs/projects in relatively little time, and I feel I would not have been able to do all this in the same amount of time without it. Most of them, I wouldn’t even have bothered to write without Claude Code, simply because they’d take too much of my time. (A list is included at the end of this post.)
