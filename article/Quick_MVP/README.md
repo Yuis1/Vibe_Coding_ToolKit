@@ -2,9 +2,11 @@
 ## 最关键的指令
 如何把一个 500MB 的Node.js残废代码，变成一个 30KB 的可用代码? 
 
-最关键的就是指定使用 PHP + Vanilla JS + SQLLite + Raw SQL 的远古技术栈。
+最关键的就是指定使用 PHP + Vanilla JS + SQLite + Raw SQL 的原始技术栈。
 
-框架和抽象是给人类用的，不是给机器人用的，它们往往会妨碍 “Vibe Coding”，而不是提供帮助。
+框架和抽象是给人类用的，不是给机器人用的，它们往往会妨碍 “Vibe Coding”，而不是提供帮助。  
+现在的 Next.js、LangChain 等框架，有资本催熟和商业的考量，引入了太多抽象层级和复杂性，把原本简单的事情又搞得很复杂。  
+也不要轻易使用 Vercel、Firebase、Superba 等PAAS服务，因为IAAS往往溢价低，云服务商丰厚的利润正是来自你迁移不走的PAAS服务。  
 
 在 Spec 或 CLAUDE.md 中加入以下内容：
 ```Markdown

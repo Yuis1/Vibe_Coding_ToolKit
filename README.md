@@ -16,8 +16,8 @@
 ## 文章
 收集Vibe Coding 相关实践和心得的文章。  
 
-- article/Getting Good Results from Claude Code
-- article/快速建立MVP
+- article/Getting_Good_Results_from_Claude_Code：类似于Spec工作流
+- article/Quick_MVP：化繁为简快速启动MVP
 
 ## 🎉 广告
 推荐使用Claude Code 中转站：[AnyRouter](https://anyrouter.top/register?aff=qndY)，通过我的 [链接注册送 100$ 额度](https://anyrouter.top/register?aff=qndY)，每天登录送 25$ 额度，可以覆盖日常轻度使用。  
