@@ -1,7 +1,16 @@
 # 🤖 AI Vibe Coding 工具集
 
-## 安装工具
+## 安装AI IDE
+### Claude Code
 - [Claude Code 安装的官方指南](https://docs.anthropic.com/en/docs/claude-code/setup#install-and-authenticate)
+
+Windows下安装有几个要点：
+
+- 需要安装 Git for Windows，并且指定环境变量 CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
+- 使用PowerShell进行原生安装 `& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) latest`
+- 实际使用时，目前还要在Git Bash里
+
+### Gemini Cli
 - [Google Cli 安装的官方指南](https://google-gemini.github.io/gemini-cli/)
 
 ## 规则集合
@@ -17,7 +26,8 @@
 收集Vibe Coding 相关实践和心得的文章。  
 
 - article/Getting_Good_Results_from_Claude_Code：类似于Spec工作流
-- article/Quick_MVP：化繁为简快速启动MVP
+- article/Quick_MVP：使用最基础的Web技术栈，化繁为简快速编写MVP
+- article/Code_With_AI_Free：如何用 AI 进行低成本、免费编程
 
 ## 🎉 广告
 推荐使用Claude Code 中转站：[AnyRouter](https://anyrouter.top/register?aff=qndY)，通过我的 [链接注册送 100$ 额度](https://anyrouter.top/register?aff=qndY)，每天登录送 25$ 额度，可以覆盖日常轻度使用。  
