@@ -79,6 +79,10 @@ alwaysApply: true
 
 **重要：根据具体的开发场景，AI 必须参考对应的规则文件，避免不同场景的规则互相干扰**
 
+### 快速构建最小可行产品
+#### rules/quick_mvp.mdc
+描述通过基础技术栈，快速构建MVP产品的规则。
+
 ### 前端开发规则
 #### rules/typescript-react.mdc
 描述 TypeScript + React 前端开发的专业规则，包含：
@@ -88,14 +92,6 @@ alwaysApply: true
 - API 集成和性能优化
 - 适用于现代 React 应用开发
 
-#### rules/web-development.mdc
-描述通用 Web 前端开发规则，包含：
-- Web 项目结构和工程化配置
-- 静态托管部署流程
-- 前端认证和状态管理
-- 适用于各种前端框架项目
-
-### AI 集成开发规则
 #### rules/copilotkit-react.mdc
 描述 CopilotKit React AI 集成开发规则，包含：
 - AI Copilot 组件集成和配置
@@ -103,6 +99,7 @@ alwaysApply: true
 - 后端 API 集成和认证
 - 适用于构建 AI 增强的 React 应用
 
+### AI 集成开发规则
 #### rules/langgraph-agent.mdc
 描述 LangGraph AI 智能体开发规则，包含：
 - 图形化工作流设计和状态管理
@@ -178,10 +175,9 @@ alwaysApply: true
 - 适用于需要设计界面的项目
 
 ## 使用指导
-- **React + AI 应用**：`typescript-react.mdc` + `copilotkit-react.mdc`
-- **AI 智能体系统**：`langgraph-agent.mdc` + `python-ai-backend.mdc` + `database.mdc`
+- **React + AI 前端**：`typescript-react.mdc` + `copilotkit-react.mdc`
+- **AI 后端**：`langgraph-agent.mdc` + `python-ai-backend.mdc`
 - **Dify 平台集成**：`dify-api-integration.mdc` + `dify-plugin-development.mdc`
-- **传统 Web 项目**：`web-development.mdc` + `database.mdc`
 - **微信小程序**：`miniprogram-development.mdc` + `cloudbase-platform.mdc`
 - **数据库操作**：`database.mdc`
 - **部署相关**：`deployment.mdc`
