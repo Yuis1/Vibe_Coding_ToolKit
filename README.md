@@ -1,4 +1,4 @@
-# 🤖 AI Vibe Coding 工具集
+# 🤖 AI Vibe Coding 工具及方法论
 
 ## 安装AI IDE
 ### Claude Code
@@ -12,6 +12,40 @@ Windows下安装有几个要点：
 
 ### Gemini Cli
 - [Google Cli 安装的官方指南](https://google-gemini.github.io/gemini-cli/)
+
+## 辅助工具推荐
+### [claude-code-router](https://github.com/musistudio/claude-code-router)  
+CC模型路由工具  
+
+- 模型路由: 根据需求将请求路由到不同的模型（例如，后台任务、思考、长上下文）。
+- 多提供商支持: 支持 OpenRouter、DeepSeek、Ollama、Gemini、Volcengine 和 SiliconFlow 等各种模型提供商。
+- 请求/响应转换: 使用转换器为不同的提供商自定义请求和响应。
+- 动态模型切换: 在 Claude Code 中使用 /model 命令动态切换模型。
+- GitHub Actions 集成: 在您的 GitHub 工作流程中触发 Claude Code 任务。
+
+### [BMad Method](https://github.com/bmad-code-org/BMAD-METHOD)
+
+BMAD (Business, Market, Architecture, Development) 是一个AI驱动的敏捷开发方法论，通过专业化智能体团队实现从商业需求到技术实现的完整工作流。  
+
+**核心理念**  
+- **智能体规划**: 专业智能体协作创建详细、一致的PRD和架构文档
+- **上下文工程开发**: 将详细计划转换为超详细的开发故事
+- **角色专业化**: 每个智能体专注特定领域，避免角色切换导致的质量下降
+
+**BMAD智能体体系**  
+- **PO (Product Owner)** - 产品负责人Sarah：需求分析、用户故事、验收标准
+- **Analyst** - 业务分析师Mary：市场研究、竞争分析、商业案例
+- **Architect** - 系统架构师Winston：技术架构、系统设计、技术选择
+- **SM (Scrum Master)** - 敏捷教练：任务分解、冲刺规划、流程协调
+- **Dev (Developer)** - 开发工程师：代码实现、技术文档
+- **QA (Quality Assurance)** - 质量保证：测试策略、质量验证
+- **Orchestrator** - 主编排器：工作流协调、智能体转换、多智能体任务管理
+
+### [code-pilot](https://github.com/ysicing/code-pilot)
+支持三大工作流系统：
+- Requirements-Pilot：一键自动化、快速迭代、质量门控、简单直接
+- Kiro 规范创建工具：需要详细功能规范的复杂功能设计 核心优势：引导式规范创建、需求澄清、设计文档生成
+- BMAD AI团队协作工作流：企业级项目、需要多角色协作、最高质量要求；模拟完整AI团队协作开发，包含产品经理、架构师、Scrum Master、开发者、QA工程师。
 
 ## 规则集合
 ### Kiro风格的Spec工作流
