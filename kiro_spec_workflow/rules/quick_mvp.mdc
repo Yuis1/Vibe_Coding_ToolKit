@@ -1,0 +1,10 @@
+# Web
+- Use a single index.php script for the entire app.
+- SQLite (WAL Mode) for all database functionality.
+- Lite frameworks, just vanilla javascript (or Lit，Preact) and css (or Milligram/Spectre.css​)
+- No ORMs, use raw SQL
+
+# Mobile
+- Responsive: use a clean minimalist elegant design that's mobile responsive
+- PWA Support: Use Web App Manifest and Service Worker​
+- 使用WebView封装快速构建 iOS/Android App
