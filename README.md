@@ -13,16 +13,7 @@ Windows下安装有几个要点：
 ### Gemini Cli
 - [Google Cli 安装的官方指南](https://google-gemini.github.io/gemini-cli/)
 
-## 辅助工具推荐
-### [claude-code-router](https://github.com/musistudio/claude-code-router)  
-CC模型路由工具  
-
-- 模型路由: 根据需求将请求路由到不同的模型（例如，后台任务、思考、长上下文）。
-- 多提供商支持: 支持 OpenRouter、DeepSeek、Ollama、Gemini、Volcengine 和 SiliconFlow 等各种模型提供商。
-- 请求/响应转换: 使用转换器为不同的提供商自定义请求和响应。
-- 动态模型切换: 在 Claude Code 中使用 /model 命令动态切换模型。
-- GitHub Actions 集成: 在您的 GitHub 工作流程中触发 Claude Code 任务。
-
+## 流程增强类规则集推荐
 ### [BMad Method](https://github.com/bmad-code-org/BMAD-METHOD)
 
 BMAD (Business, Market, Architecture, Development) 是一个AI驱动的敏捷开发方法论，通过专业化智能体团队实现从商业需求到技术实现的完整工作流。  
@@ -46,6 +37,31 @@ BMAD (Business, Market, Architecture, Development) 是一个AI驱动的敏捷开
 - Requirements-Pilot：一键自动化、快速迭代、质量门控、简单直接
 - Kiro 规范创建工具：需要详细功能规范的复杂功能设计 核心优势：引导式规范创建、需求澄清、设计文档生成
 - BMAD AI团队协作工作流：企业级项目、需要多角色协作、最高质量要求；模拟完整AI团队协作开发，包含产品经理、架构师、Scrum Master、开发者、QA工程师。
+
+## 成本优化类辅助工具推荐
+### [claude-code-router](https://github.com/musistudio/claude-code-router)  
+CC模型路由工具，可以对不同的操作切换到第三方模型。
+
+- 模型路由: 根据需求将请求路由到不同的模型（例如，后台任务、思考、长上下文）。
+- 多提供商支持: 支持 OpenRouter、DeepSeek、Ollama、Gemini、Volcengine 和 SiliconFlow 等各种模型提供商。
+- 请求/响应转换: 使用转换器为不同的提供商自定义请求和响应。
+- 动态模型切换: 在 Claude Code 中使用 /model 命令动态切换模型。
+- GitHub Actions 集成: 在 GitHub 工作流程中触发 Claude Code 任务。
+
+缺陷：
+
+1. 需要用 ccr 命令启动，不利于在 IDE 中集成
+2. 对号池的支持较弱，额度耗尽后需要手工切换  
+
+### [claude-code-companion](https://github.com/kxn/claude-code-companion)
+本地 API 代理工具。它通过管理多个上游端点、验证返回格式并在必要时自动切换端点，提升代理的稳定性与可观测性，同时提供完整的 Web 管理界面。
+
+- 多端点负载均衡与故障转移：支持配置多个上游服务（端点），按优先级尝试并自动切换不可用端点。
+- 响应格式验证：校验上游返回是否满足 Anthropic 协议，遇到异常响应可断开并触发重连。
+- OpenAI 兼容节点接入：通过“OpenAI 兼容”类型可将 GPT5、GLM、K2 等模型接入 Claude Code 使用。
+- 智能故障检测：自动标记异常端点并在后台检测恢复情况。
+- 智能标签路由：基于请求路径、头部或内容的动态路由规则，支持按标签选择端点。
+- 请求日志与可视化管理：记录完整请求/响应日志，提供端点管理、日志查看与系统监控的 Web 界面。
 
 ## 规则集合
 ### Kiro风格的Spec工作流
