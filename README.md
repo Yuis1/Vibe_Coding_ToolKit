@@ -72,6 +72,12 @@ CC模型路由工具，可以对不同的操作切换到第三方模型。
 2. 独立于 Claude Code 之外运行，方便再次集成其它工具
 3. 各种省钱的贴心功能
 
+*部署中的几个坑：*
+1. Endpoint Name不要含有 /
+2. 魔搭社区：Path Prefix 应该是 /v1/chat/completions； Model Rewrite Configuration 不能仅选1个模型，而是要匹配 * ，可能是底层对 Haiku 的调用和Sonnet接不上；不支持Tools的模型：Kimi-K2、DeepSeek v3.1； DeepSeek v3.1 Range of max_tokens should be [1, 8192]；
+3. 火山引擎： Request Parameter 覆盖配置，需要加入 max_completion_tokens ，值留空。
+
+
 ## 规则集合
 ### Kiro风格的Spec工作流
 目录：kiro_spec_workflow
