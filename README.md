@@ -8,7 +8,7 @@ Windows下安装有几个要点：
 
 - 需要安装 Git for Windows，并且指定环境变量 CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
 - 使用PowerShell进行原生安装 `& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) latest`
-- 实际使用时，目前还要在Git Bash里
+- 实际使用时，目前还要在Git Bash里执行 `claude` 命令。另外，使用 Warp + Git Bash容易出错退出。
 
 ### Gemini Cli
 - [Google Cli 安装的官方指南](https://google-gemini.github.io/gemini-cli/)
@@ -37,6 +37,9 @@ BMAD (Business, Market, Architecture, Development) 是一个AI驱动的敏捷开
 - Requirements-Pilot：一键自动化、快速迭代、质量门控、简单直接
 - Kiro 规范创建工具：需要详细功能规范的复杂功能设计 核心优势：引导式规范创建、需求澄清、设计文档生成
 - BMAD AI团队协作工作流：企业级项目、需要多角色协作、最高质量要求；模拟完整AI团队协作开发，包含产品经理、架构师、Scrum Master、开发者、QA工程师。
+
+*缺陷：*
+1. 如果要使用 Hooks 来实现通知和统计，目前仅支持macOS，Windows git bash等不支持，Clande Code 的Hooks指令在Windows git bash 下无法识别 ~ ，也无法识别 $HOME 环境变量。且 script 目录下的指令没做其它系统的适配。以上将导致Hooks执行出错的消息持续占据版面，极端影响体验。
 
 ## 成本优化类辅助工具推荐
 ### [claude-code-router](https://github.com/musistudio/claude-code-router)  
@@ -74,7 +77,7 @@ CC模型路由工具，可以对不同的操作切换到第三方模型。
 
 *部署中的几个坑：*
 1. Endpoint Name不要含有 /
-2. 魔搭社区：Path Prefix 应该是 /v1/chat/completions； Model Rewrite Configuration 不能仅选1个模型，而是要匹配 * ，可能是底层对 Haiku 的调用和Sonnet接不上；不支持Tools的模型：Kimi-K2、DeepSeek v3.1； DeepSeek v3.1 Range of max_tokens should be [1, 8192]；
+2. 魔搭社区：Path Prefix 应该是 /v1/chat/completions； Model Rewrite Configuration 不能仅选1个模型，而是要匹配 * ，可能是底层对 Haiku 的调用和Sonnet接不上；不支持Tools的模型：Kimi-K2、DeepSeek v3.1； DeepSeek v3.1, Kimi K2，Range of max_tokens should be [1, 8192]；
 3. 火山引擎： Request Parameter 覆盖配置，需要加入 max_completion_tokens ，值留空。
 
 
