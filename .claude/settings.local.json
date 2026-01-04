@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Read(/C:\\Users\\youho\\.claude/**)"
+      "mcp__skill-seeker__scrape_docs",
+      "mcp__skill-seeker__scrape_github",
+      "Bash(pip install:*)",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__skill-seeker__generate_config",
+      "Bash(export:*)",
+      "Bash(export https_proxy=\"http://10.255.255.254:1087\":*)",
+      "Bash(echo:*)",
+      "Bash(python -m skill_seeker scrape_github:*)",
+      "mcp__skill-seeker__validate_config"
     ],
     "deny": [],
     "ask": []
