@@ -40,11 +40,11 @@ Windows下安装有几个要点：
 ### [OpenCode](https://github.com/anomalyco/opencode)
 开源，可以自由修改。
 
-搭配 (oh-my-opencode)[https://github.com/code-yeongyu/oh-my-opencode] 使用，可以实现强制任务执行循环。
+搭配 [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) 使用，可以实现强制任务执行循环。
 
 ### [Vibe-kanban](https://github.com/BloopAI/vibe-kanban)
-推荐等级：一般
-特性：后台调用Claude Code、CodeX、Gemini Cli、OpenCode等编程工具，采用看板的方式来支持多个git分支并行开发，每个PR就是一个分支。
+推荐等级：一般  
+特性：后台调用Claude Code、CodeX、Gemini Cli、OpenCode等编程工具，采用看板的方式来支持多个git分支并行开发，每个PR就是一个分支。  
 点评：强制遵循git的开发方式，各个PR在没有merge之前无法共享修改进度，导致实际使用起来体验不佳。
 
 ## 辅助配置工具
@@ -60,7 +60,7 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 ### [ZCF](https://github.com/UfoMiao/zcf)
 zcf 全称 Zero-Config Code Flow，零配置代码流。把 Claude Code 的配置过程从手动改配置文件，变成了交互式问答，你只需要回答几个问题，它就自动帮你配置好所有东西。不需要你知道配置文件在哪，不需要你了解 JSON 格式，甚至不需要你懂什么是 MCP 服务，全程傻瓜式操作。
 
-### [claude-code-router](https://github.com/musistudio/claude-code-router)  
+### [claude-code-router](https://github.com/musistudio/claude-code-router)
 CC模型路由工具，可以对不同的操作切换到第三方模型。
 
 ### [claude-code-companion](https://github.com/kxn/claude-code-companion)
@@ -74,16 +74,16 @@ Antigravity多账户管理
 
 ## Vibe-Coding周边生态
 ### [agent-browser](https://github.com/vercel-labs/agent-browser)
-推荐指数：推荐
+推荐指数：推荐  
 agent操作浏览器，通过给每个元素一个代号，从而极简agent浏览网页的上下文。
 
 ## UI/UE 设计
 https://stitch.withgoogle.com/  谷歌的产品设计工具，直接生成Figma页面
 
 ## 前端开发工具
-https://www.weavefox.cn/   [阿里]前端一站式AI工具
-https://v0.app/  Vercel提供的前端开发工具
-https://reweb.so/  
+- https://www.weavefox.cn/   [阿里]前端一站式AI工具
+- https://v0.app/  Vercel提供的前端开发工具
+- https://reweb.so/  
 
 ## 流程规范
 ### [Spec-Kit](https://github.com/github/spec-kit)
@@ -91,7 +91,7 @@ https://reweb.so/
 
 核心逻辑：宪法优先。它认为 AI 最大的问题是"胡乱发挥"，所以必须先有一个 constitution.md 文件，里面写死技术栈（如：必须用 Next.js 14，必须用 Tailwind，禁止使用 class 组件）。AI 在做任何任务前，必须先熟读宪法。
 
-优点：
+优点：  
 - 一致性极强：不管换哪个 AI 模型，写出来的代码风格都像同一个人写的。
 - 官方背书：GitHub 官方推出的 SDD (Spec-Driven Development) 参考实现，未来可能集成进 Copilot。
 - 架构防腐：防止 AI 引入团队禁止的库或写法。
