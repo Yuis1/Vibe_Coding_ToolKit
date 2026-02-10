@@ -48,11 +48,6 @@ Windows下安装有几个要点：
 点评：强制遵循git的开发方式，各个PR在没有merge之前无法共享修改进度，导致实际使用起来体验不佳。
 
 ## 辅助配置工具
-### skills.sh
-推荐等级：必选  
-官网 https://skills.sh/  
-Vercel出品，支持将git仓库中的skills一键安装到市面上所有编程工具，并且附带Skills的Stars数量排名，极大提升了Skills的管理效率。
-
 ### [cc-switch](https://github.com/farion1231/cc-switch)
 推荐等级：推荐  
 支持对常见编程工具（不仅仅支持Claude Code）的 MCP、Prompt、Skills 等进行集成管理。
@@ -84,6 +79,23 @@ https://stitch.withgoogle.com/  谷歌的产品设计工具，直接生成Figma�
 - https://www.weavefox.cn/   [阿里]前端一站式AI工具
 - https://v0.app/  Vercel提供的前端开发工具
 - https://reweb.so/  
+
+## Skills
+### skills.sh
+推荐等级：必选  
+官网 https://skills.sh/   
+Vercel出品，支持将git仓库中的skills一键安装到市面上所有编程工具，并且附带Skills的Stars数量排名，极大提升了Skills的管理效率。
+
+### 重要skills
+- skill_creator：创建技能的元技能。
+- find-skills：按需查找并安装技能
+- agent-browser：适用于网页内容简单提取。
+- browser-use：日常测试、自动化流程。适用于交互复杂、链路较深、依赖登录态的操作。
+
+## MCP
+- LangChain_docs：search LangChain/LangGraph/DeepAgent official docs for best practices and API details
+- Chrome DevTools：用于前端深度调试。能看性能追踪、调用栈、网络请求。
+- Playwright：用于前端跨浏览器兼容性测试。
 
 ## 流程规范
 ### [Spec-Kit](https://github.com/github/spec-kit)
