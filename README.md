@@ -162,3 +162,32 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 缺点：
 - 过度设计（Overkill）：杀鸡用牛刀。为了写个简单的脚本，它可能会先开三个会（智能体之间交互），消耗大量 Token 和时间。
 - 慢：相比 OpenSpec 可能 5 分钟改完代码，BMAD 可能需要运行半小时来完成全套流程。
+
+
+### [pua](https://github.com/tanweai/pua)
+`npx skills add https://github.com/tanweai/pua --skill pua`  
+一个 AI Coding Agent 技能插件，用中西大厂 PUA 话术驱动 AI 穷尽所有方案才允许放弃。支持 Claude Code、OpenAI Codex CLI、Cursor、Kiro、CodeBuddy、OpenClaw、Google Antigravity 和 OpenCode。三重能力：
+
+- PUA 话术 — 让 AI 不敢放弃
+- 调试方法论 — 让 AI 有能力不放弃
+- 能动性鞭策 — 让 AI 主动出击而不是被动等待
+
+
+## 多智能体协调工作
+### [OpenClaw + Codex/ClaudeCode Agent Swarm: The One-Person Dev Team](https://x.com/elvissun/status/2025920521871716562)
+通过OpenClaw高效驱动Codex/ClaudeCode智能体集群。
+```
+一天 94 次提交 。我最高效的一天——我进行了 3 次客户通话，一次都没有打开过编辑器。平均每天大约 50 次提交。
+30 分钟内 7 个 PR。从想法到生产非常快，因为编码和验证大多是自动化的。
+提交 → MRR: 我用它来构建一个真实的 B2B SaaS——将其与创始人领导的销售捆绑，以实现大多数功能请求的当日交付。速度将潜在客户转化为付费客户。
+```
+
+### [AionUi](https://github.com/iOfficeAI/AionUi)
+整合了多个Agent的Cowork平台。  
+
+- 支持的 Agent： 内置 Agent（零配置） • Claude Code • Codex • Qwen Code • Goose AI • OpenClaw • Augment Code • iFlow CLI • CodeBuddy • Kimi CLI • OpenCode • Factory Droid • GitHub Copilot • Qoder CLI • Mistral Vibe • Nanobot 等
+- 现成的专业助手 — 内置 11+ 个专业助手（Cowork、PPTX 生成器、PDF 转 PPT、3D 游戏、UI/UX Pro Max 等），拿来就能用
+- 支持远程访问：WebUI + Telegram / Lark / DingTalk
+
+### [agency-agents](https://github.com/msitarzewski/agency-agents)
+特色：预置了几十个工种的详细工作流程模板
