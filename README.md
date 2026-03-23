@@ -138,6 +138,8 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 缺点：  
 - 依赖模型智商：需要像 Claude 3.5 Sonnet 这样高智商的模型才能完美执行复杂的 TDD 流程。
 
+使用手册： https://mp.weixin.qq.com/s/GoQsIkhPRRdbrxSEa7vDlg
+
 ### [BMad Method](https://github.com/bmad-code-org/BMAD-METHOD)
 核心逻辑：AI驱动的敏捷开发方法论，通过专业化智能体团队实现从商业需求到技术实现的完整工作流。它不仅写代码，而是模拟了一个软件公司。有专门写 PRD 的智能体，有专门画架构图的，有专门写代码的，还有专门找茬（QA）的。  
 
@@ -173,8 +175,8 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 - 能动性鞭策 — 让 AI 主动出击而不是被动等待
 
 
-## 多智能体协调工作
-### [OpenClaw + Codex/ClaudeCode Agent Swarm: The One-Person Dev Team](https://x.com/elvissun/status/2025920521871716562)
+## 多智能体
+### [文章：OpenClaw + Codex/ClaudeCode Agent Swarm: The One-Person Dev Team](https://x.com/elvissun/status/2025920521871716562)
 通过OpenClaw高效驱动Codex/ClaudeCode智能体集群。
 ```
 一天 94 次提交 。我最高效的一天——我进行了 3 次客户通话，一次都没有打开过编辑器。平均每天大约 50 次提交。
@@ -182,12 +184,61 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 提交 → MRR: 我用它来构建一个真实的 B2B SaaS——将其与创始人领导的销售捆绑，以实现大多数功能请求的当日交付。速度将潜在客户转化为付费客户。
 ```
 
-### [AionUi](https://github.com/iOfficeAI/AionUi)
-整合了多个Agent的Cowork平台。  
+### [GStack](https://github.com/garrytan/gstack)
+这是由 Y Combinator CEO **Garry Tan** 开源的个人实战配置。它不是为了求全，而是为了**“极速交付”**。它是专为 Anthropic 的命令行工具 **Claude Code** 设计的一套定制化指令（Slash Commands）。
+
+**核心特色：**
+* **角色精简化**：GStack 只提炼了 15 个最核心的角色（如 CEO、架构师、Paranoid Reviewer、QA、发布工程师），模拟了一个高效初创团队的运作逻辑。
+* **创始人视角（CEO 模式）**：其独有的 `/plan-ceo-review` 指令会强制 AI 重新思考问题的本质，寻找能够将“平庸需求”转化为“10 星产品”的路径，这融合了 YC 的产品哲学。
+* **自动化闭环**：它集成了 **Playwright** 浏览器自动化，让 AI 可以直接打开浏览器进行视觉核对（Visual QA），并提供 `/ship` 指令一键运行测试、合并代码并开启 PR。
+* **极速安装**：专为开发者设计，通过简单的 `git clone` 即可将这套硅谷顶级的开发流“平替”到自己的终端里。
+
+### [Agency-Agents](https://github.com/msitarzewski/agency-agents)
+这不仅是一个 Prompt 库，它更像是一本**“AI 时代的数字员工操作手册”**。该项目目前拥有超过 110 个预置的专家角色，覆盖了从后端架构到“现实检查员（Reality Checker）”等各种细分工种。
+
+**核心特色：**
+* **深度的专业流程**：不同于简单的“你是一个开发者”，它为每个角色提供了详尽的任务清单、沟通风格和交付标准（Definition of Done）。例如，它的 QA 智能体被设定为“极度挑剔”，甚至会要求你提供视觉证明或至少找出 3-5 个问题才允许通过。
+* **多维度覆盖**：它将智能体划分为工程、设计、营销、法律、空间计算等 9 个大部门，甚至包含“注入奇思妙想（Whimsy Injector）”这种极具个性的角色。
+* **跨工具兼容**：这些 `.md` 格式的角色文件可以直接注入到 **Claude Code**、**Cursor** 或 **Aider** 中，瞬间提升这些通用 AI 助手在特定领域的专业度。
+
+安装时注意：不是简单的拷贝智能体角色文件，而是需要通过项目内脚本对不同的编程工具进行格式转换后才可以拷贝。
+
+## Cowork
+### AionUI
+AionUI 是一个**面向 Agentic Workflow（智能体工作流）的下一代 UI 框架**。它旨在为 AI 驱动的应用提供“动态生成”的交互界面，使 AI 不再局限于对话框，而是能够根据任务上下文实时构建功能组件。
 
 - 支持的 Agent： 内置 Agent（零配置） • Claude Code • Codex • Qwen Code • Goose AI • OpenClaw • Augment Code • iFlow CLI • CodeBuddy • Kimi CLI • OpenCode • Factory Droid • GitHub Copilot • Qoder CLI • Mistral Vibe • Nanobot 等
 - 现成的专业助手 — 内置 11+ 个专业助手（Cowork、PPTX 生成器、PDF 转 PPT、3D 游戏、UI/UX Pro Max 等），拿来就能用
 - 支持远程访问：WebUI + Telegram / Lark / DingTalk
 
-### [agency-agents](https://github.com/msitarzewski/agency-agents)
-特色：预置了几十个工种的详细工作流程模板
+### **Paperclip (paperclipai/paperclip)**
+Paperclip 是一个**开源的 AI 智能体编排平台（Agent Orchestration Platform）**。它的核心理念是“**如果你把 AI 编码智能体看作员工，那么 Paperclip 就是这家公司**”。它不提供底层的模型或单一的对话框，而是为多个自主运行的 AI Agent 提供一个完整的“组织架构层”。
+
+**核心定位：**
+* **零人力公司（Zero-Human Company）驱动引擎**：它允许用户通过 UI 界面，像管理真实公司一样去管理 AI 智能体集群。
+* **组织架构管理**：用户可以在系统中设置 **部门（Departments）**、**组织架构图（Org Charts）**、**预算控制（Budgets）** 以及 **治理策略（Governance）**。
+* **非侵入性编排**：它是“无偏好（Unopinionated）”的。无论你使用的是 Claude、OpenAI 的原生模型，还是 OpenClaw 等第三方 Agent，只要它们能接收指令并返回心跳信号，Paperclip 就能将其“入职”到公司架构中。
+
+**核心功能细节：**
+* **AI CEO 模式**：系统通常由一个中央“CEO 智能体”领导，它可以拆解复杂目标、招聘下级 Agent、分配任务并审核产出结果。
+* **任务与审批流**：支持任务的自动分发和跨 Agent 的审批机制，模仿现实企业的协作流程。
+* **全透明看板**：提供一个集中式的 Dashboard（仪表盘），让用户能够实时监控整个 AI 团队的执行进度、消耗成本和当前状态。
+* **技术栈**：基于 Node.js 服务端和 React 前端构建，强调高性能与直观的交互体验。
+
+### 对比总结
+Paperclip 侧重于**后端组织架构和任务编排**，**AionUI** 更专注于 **前端交互的动态生成（Generative UI）**。
+
+* **Paperclip** 解决的是：如何让 50 个 Agent 像一个公司一样有序工作？
+* **AionUI** 解决的是：如何让这 50 个 Agent 能够根据需要，为用户实时变幻出最合适的操控界面？
+
+
+## 数据存储
+### [Mindsdb](https://mindsdb.com)
+MindsDB 是一个联邦数据与 AI 上下文引擎。它通过 SQL 接口将 300 多种数据源（数据库、SaaS、文件）与 AI 模型（LLMs、Agent 框架）无缝连接，无需复杂的 ETL 流程，即可在实时业务数据上构建、部署和扩展企业级 AI Agent。
+
+**核心价值**  
+- 统一接入：将分散的 Excel、SQL 数据库、API 统一抽象为可查询的数据库视图。
+- 语义对齐：利用 AI 自动理解并映射不规范的数据表头。
+- Agent 骨干：基于最新的 Pydantic AI 架构，提供高性能、类型安全的数据问答与自动化决策能力。
+- Model-In-Database：直接通过 SQL CREATE MODEL 或 CREATE AGENT 即可把 AI 逻辑部署在数据侧。
+
