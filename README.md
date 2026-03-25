@@ -231,6 +231,26 @@ Paperclip 侧重于**后端组织架构和任务编排**，**AionUI** 更专注�
 * **Paperclip** 解决的是：如何让 50 个 Agent 像一个公司一样有序工作？
 * **AionUI** 解决的是：如何让这 50 个 Agent 能够根据需要，为用户实时变幻出最合适的操控界面？
 
+## 部署
+### [clawhost](https://github.com/fastclaw-ai/clawhost)
+开源 ClawHost，基于集群的 OpenClaw 多租户部署面板1. 在 k8s pod 部署。  
+1. 挂载 pvc 实现持久存储
+2. 支持 Rest API，对 OpenClaw Bot 进行创建、更新、重启等操作，可通过接口管理每个 OpenClaw 内的 models、channels、skills
+3. 支持自定义镜像，打包常用的工具、extensions、skills 到 OpenClaw 实例
+4. 管理员可创建多个 App，每个 App 可调接口创建多个 OpenClaw Bot
+5. 内置管理面板，可视化管理 Apps，Bots
+
+用途：  
+1. 养虾需求很大，用户需要开箱即用的方案，ClawHost 可以帮你实现 OpenClaw 托管平台
+2. 公司内部希望给每个员工配一个专业虾，ClawHost 可以帮你做私有化部署，统一管理
+
+用法：  
+1. 选择一个云服务厂商，购买托管版 k8s 集群，开通 nas 存储
+2. 拉取 ClawHost 项目代码，查看 deploy 文件，通过 kubectl、helm 部署到 k8s 集群
+3. 解析一个域名到 k8s 集群，每一个创建的 OpenClaw Bot，可通过子域名访问 Web UI
+4. 访问 ClawHost 管理面板，可视化创建 Apps，Bots
+5. 如果需要对外提供 SaaS 服务，需要自行实现前端应用，通过 App Token，调用 API 创建 Bot
+
 
 ## 数据存储
 ### [Mindsdb](https://mindsdb.com)
