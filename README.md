@@ -91,6 +91,12 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 - find-skills：按需查找并安装技能
 - agent-browser：适用于网页内容简单提取。
 - browser-use：日常测试、自动化流程。适用于交互复杂、链路较深、依赖登录态的操作。
+- [frontend-design](https://skills.sh/anthropics/skills/frontend-design)：增加ChatGPT的前端审美，必备
+- [Superpowers](https://github.com/obra/superpowers)
+
+ superpowers 的 /brainstorming 和 gstack 的 /office-hours。两者都采用了苏格拉底式提问，通过连续追问引导你一步步找到自己真正的目的：你想解决什么问题？为什么现有方案不够好？你真正想达成的目标是什么？这个方向值得投入吗？
+
+ AI 让我们拥有了前所未有的生产力，但生产力不等于价值。我们有没有想过一个更根本的问题：我们正在做的这件事，到底有没有用？到底有没有市场？
 
 ## MCP
 - LangChain_docs：search LangChain/LangGraph/DeepAgent official docs for best practices and API details
@@ -185,13 +191,52 @@ Vercel出品，支持将git仓库中的skills一键安装到市面上所有编�
 ```
 
 ### [GStack](https://github.com/garrytan/gstack)
-这是由 Y Combinator CEO **Garry Tan** 开源的个人实战配置。它不是为了求全，而是为了**“极速交付”**。它是专为 Anthropic 的命令行工具 **Claude Code** 设计的一套定制化指令（Slash Commands）。
+这是由 Y Combinator CEO **Garry Tan** 开源的个人实战配置。
 
-**核心特色：**
-* **角色精简化**：GStack 只提炼了 15 个最核心的角色（如 CEO、架构师、Paranoid Reviewer、QA、发布工程师），模拟了一个高效初创团队的运作逻辑。
-* **创始人视角（CEO 模式）**：其独有的 `/plan-ceo-review` 指令会强制 AI 重新思考问题的本质，寻找能够将“平庸需求”转化为“10 星产品”的路径，这融合了 YC 的产品哲学。
-* **自动化闭环**：它集成了 **Playwright** 浏览器自动化，让 AI 可以直接打开浏览器进行视觉核对（Visual QA），并提供 `/ship` 指令一键运行测试、合并代码并开启 PR。
-* **极速安装**：专为开发者设计，通过简单的 `git clone` 即可将这套硅谷顶级的开发流“平替”到自己的终端里。
+**思考与规划阶段：**
+
+-   `/office-hours` - YC Office Hours 风格，6 个强制问题重新定义产品，挑战你的假设
+-   `/plan-ceo-review` - CEO 视角重新思考问题，找到隐藏的 10 星产品（4 种模式：扩展/选择性扩展/保持范围/缩减）
+-   `/plan-eng-review` - 工程经理锁定架构、数据流、边界情况和测试计划
+-   `/plan-design-review` - 高级设计师对每个设计维度打分（0-10），解释 10 分是什么样，然后编辑计划达到目标
+-   `/design-consultation` - 从零构建完整设计系统，了解行业现状，提出创意风险，生成真实产品原型
+
+**开发与审查阶段：**
+
+-   `/review` - 资深工程师找出通过 CI 但会在生产环境爆炸的 bug，自动修复明显问题
+-   `/investigate` - 系统化根因调试，铁律：没有调查就没有修复，3 次失败后停止
+-   `/design-review` - 会写代码的设计师，审查后直接修复，原子提交 + 前后截图
+
+**测试阶段：**
+
+-   `/browse` - 给 AI 一双眼睛，真实 Chromium 浏览器、真实点击、真实截图
+-   `/qa` - QA 主管测试应用、发现 bug、用原子提交修复、重新验证，为每个修复自动生成回归测试
+-   `/qa-only` - 纯报告模式，只报告 bug 不修改代码
+-   `/setup-browser-cookies` - 从真实浏览器导入 cookies，测试需要认证的页面
+
+**发布与文档阶段：**
+
+-   `/ship` - 发布工程师同步主分支、运行测试、审查覆盖率、推送、打开 PR，如果没有测试框架会自动引导创建
+-   `/document-release` - 技术写作者更新所有项目文档以匹配刚发布的内容，自动捕捉过期的 README
+    
+
+**反思阶段：**
+
+-   `/retro` - 工程经理主持的团队周报，每人分解、发布连续性、测试健康趋势、成长机会
+
+**强力工具（6 个）：**
+
+-   `/codex` - 第二意见，OpenAI Codex CLI 的独立代码审查（3 种模式：审查/对抗性挑战/开放咨询）
+-   `/careful` - 安全护栏，在破坏性命令前警告（rm -rf、DROP TABLE、force-push）
+-   `/freeze` - 编辑锁定，限制文件编辑到一个目录
+-   `/guard` - 完全安全模式，`/careful` + `/freeze` 组合
+-   `/unfreeze` - 解除锁定
+-   `/gstack-upgrade` - 自我升级到最新版本
+
+#### 优势和创新
+
+1.  `/office-hours` **精准发现真问题** 它会根据不同视角（创业、hackathon、side project）问你不同的问题。我有个项目本来想做“开发者工具”，用了 `/office-hours` 之后发现真正的机会在“帮非技术创始人理解技术债务”——完全不同的方向，但更有价值。
+2.  **多 AI 交叉审查**   `/codex` 调用 OpenAI 的独立审查，当 `/review`（Claude）和 `/codex`（OpenAI）都审查同一分支时，会生成交叉模型分析报告。两个 AI 都发现的问题通常是真问题，单一模型发现的可能是误报。
 
 ### [Agency-Agents](https://github.com/msitarzewski/agency-agents)
 这不仅是一个 Prompt 库，它更像是一本**“AI 时代的数字员工操作手册”**。该项目目前拥有超过 110 个预置的专家角色，覆盖了从后端架构到“现实检查员（Reality Checker）”等各种细分工种。

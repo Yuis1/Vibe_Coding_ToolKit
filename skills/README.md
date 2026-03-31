@@ -13,3 +13,17 @@ Skill 有三种存储位置:
 - 插件 Skills来自 Claude Code 插件,插件安装时自动可用
 
 最有用的元技能：skill-creator
+
+
+## AI原生幻灯片方案
+### marp
+VScode插件 https://marp.app
+可以导出 PDF版本
+
+### Slidev
+https://sli.dev/  
+也是基于Markdown，但是功能更丰富
+
+### revealjs
+https://revealjs.com/
+HTML presentation framework ，Support Markdown。
